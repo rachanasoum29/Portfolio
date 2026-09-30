@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" fill="none">
+  <rect width="1600" height="900" fill="#FFE4DE"/>
+  <text x="72" y="70" fill="#FF6F61" font-family="ui-monospace, monospace" font-size="20" letter-spacing="4">03  PLACEHOLDER</text>
+  <text x="80" y="520" fill="#202020" font-family="ui-sans-serif, sans-serif" font-size="220" font-weight="500" letter-spacing="-8">TYPE</text>
+  <rect x="80" y="580" width="420" height="8" fill="#FF6F61"/>
+  <rect x="1080" y="180" width="2" height="560" fill="#202020"/>
+  <rect x="1140" y="240" width="280" height="12" fill="#202020" opacity="0.45"/>
+  <rect x="1140" y="280" width="220" height="12" fill="#202020" opacity="0.25"/>
+  <rect x="1140" y="320" width="250" height="12" fill="#202020" opacity="0.25"/>
+</svg>

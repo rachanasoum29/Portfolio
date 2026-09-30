@@ -1,26 +1,249 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fff8f5;
+  --foreground: #202020;
+  --muted: #77706d;
+  --line: #e8d8d3;
+  --accent: #ff6f61;
+  --accent-hover: #f05a4e;
+  --accent-text: #c4473c;
+  --surface: #ffe4de;
+  --on-accent: #202020;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #171414;
+  --foreground: #fff8f5;
+  --muted: #b8aaa6;
+  --line: #3b302d;
+  --accent: #ff6f61;
+  --accent-hover: #f05a4e;
+  --accent-text: #ff6f61;
+  --surface: #3a2522;
+  --on-accent: #202020;
+  color-scheme: dark;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-text: var(--accent-text);
+  --color-surface: var(--surface);
+  --color-on-accent: var(--on-accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  overflow-x: clip;
 }
 
 body {
+  max-width: 100%;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 3px;
+}
+
+[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+.skip-link {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 60;
+  transform: translateY(-200%);
+  background: var(--foreground);
+  color: var(--background);
+  padding: 0.6rem 1rem;
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes lift {
+  from {
+    transform: translateY(16px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes nudge {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+@keyframes contact-underline {
+  from {
+    background-size: 0 1px;
+  }
+  to {
+    background-size: 100% 1px;
+  }
+}
+
+@keyframes skill-slide {
+  0% {
+    opacity: 0;
+    transform: translateX(1.25rem);
+  }
+  65% {
+    opacity: 1;
+    transform: translateX(-2.8875%);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .enter {
+    animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .pop {
+    animation: pop 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .nudge {
+    animation: nudge 1.8s ease-in-out infinite;
+  }
+
+  .skill-mark {
+    animation: skill-slide 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: lift 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+
+    .pop-view {
+      animation: pop linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 28%;
+    }
+
+    .skill-mark {
+      animation: skill-slide linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
+}
+
+.arrow-shift {
+  display: inline-block;
+}
+
+.contact-mail {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 1px;
+  transition: color 200ms ease;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .media-zoom {
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .group:hover .media-zoom {
+    transform: scale(1.03);
+  }
+
+  .arrow-shift {
+    transition: transform 300ms ease;
+  }
+
+  .group:hover .arrow-shift {
+    transform: translateX(4px);
+  }
+
+  .skill-row {
+    transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .skill-row:hover {
+    transform: translateX(-2.8875%);
+  }
+
+  .contact-mail:hover {
+    color: var(--accent-text);
+    animation: contact-underline 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .contact-social {
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), color 200ms ease;
+  }
+
+  .contact-social:hover {
+    transform: translateX(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

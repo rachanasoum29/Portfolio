@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
+import { Footer } from "@/components/Footer";
+import { Navbar } from "@/components/Navbar";
+import { site } from "@/data/site";
 import "./globals.css";
+
+const themeScript = `(function(){try{var t=localStorage.getItem("theme");var d=t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);}catch(e){}})();`;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,19 +19,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "Next.js, TypeScript, and Tailwind CSS starter",
+  title: {
+    default: site.name,
+    template: `%s — ${site.name}`,
+  },
+  description: site.intro,
 };
 
-export default function RootLayout({
-  children,
-}: LayoutProps<"/">) {
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeScript}
+        </Script>
+        <a href="#content" className="skip-link">
+          Skip to content
+        </a>
+        <Navbar />
+        <main id="content" className="min-w-0 flex-1 pt-14">
+          {children}
+        </main>
+        <Footer />
+      </body>
     </html>
   );
 }

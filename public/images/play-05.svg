@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" fill="none">
+  <rect width="1600" height="900" fill="#FFE4DE"/>
+  <text x="72" y="70" fill="#FF6F61" font-family="ui-monospace, monospace" font-size="20" letter-spacing="4">05  PLACEHOLDER</text>
+  <rect x="140" y="220" width="280" height="72" fill="#202020"/>
+  <rect x="460" y="220" width="280" height="72" stroke="#202020" stroke-width="2"/>
+  <rect x="780" y="220" width="280" height="72" fill="#FF6F61"/>
+  <rect x="180" y="420" width="88" height="48" rx="24" fill="#202020"/>
+  <circle cx="244" cy="444" r="16" fill="#FFF8F5"/>
+  <rect x="340" y="420" width="88" height="48" rx="24" stroke="#202020" stroke-width="2"/>
+  <circle cx="364" cy="444" r="16" fill="#202020"/>
+  <circle cx="620" cy="444" r="28" fill="#202020"/>
+  <circle cx="740" cy="444" r="28" stroke="#202020" stroke-width="2"/>
+  <circle cx="860" cy="444" r="28" fill="#FF6F61"/>
+  <rect x="140" y="560" width="920" height="1" fill="#202020"/>
+  <rect x="140" y="600" width="420" height="12" fill="#202020" opacity="0.35"/>
+</svg>
