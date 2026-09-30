@@ -42,6 +42,7 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
           description: project.description,
           image: project.image ?? "",
           technologies: project.technologies.join(", "),
+          year: project.year,
           order: project.order,
           published: project.published,
         }}

@@ -15,7 +15,7 @@ export function DeviceStage({
 }: {
   src: string;
   title: string;
-  year: string;
+  year?: string;
   href: string;
   number?: string;
   summary?: string;
@@ -40,7 +40,9 @@ export function DeviceStage({
         <div className="absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-[#141211] via-[#141211]/92 to-transparent px-5 pt-20 pb-5 sm:px-8 sm:pt-28 sm:pb-7">
           <div className="flex items-end justify-between gap-6">
             <p className="font-mono text-sm text-accent">{number}</p>
-            <p className="shrink-0 text-[11px] tracking-[0.16em] text-[#B8AAA6] sm:text-sm">{year}</p>
+            {year ? (
+              <p className="shrink-0 text-[11px] tracking-[0.16em] text-[#B8AAA6] sm:text-sm">{year}</p>
+            ) : null}
           </div>
           <h2 className="mt-2 max-w-[14em] text-[clamp(1.6rem,3vw,2.6rem)] font-medium uppercase leading-[0.95] tracking-[-0.03em] text-[#FFF8F5]">
             {title}
@@ -52,11 +54,11 @@ export function DeviceStage({
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#D9CBC7]">{summary}</p>
           ) : null}
         </div>
-      ) : (
+      ) : year ? (
         <p className="absolute right-5 bottom-4 z-30 text-[11px] tracking-[0.16em] text-[#B8AAA6] sm:right-8 sm:bottom-6 sm:text-sm">
           {year}
         </p>
-      )}
+      ) : null}
     </div>
   );
 }

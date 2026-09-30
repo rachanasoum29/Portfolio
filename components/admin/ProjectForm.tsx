@@ -22,6 +22,7 @@ export type ProjectFormValues = {
   description: string;
   image: string;
   technologies: string;
+  year: string;
   order: number;
   published: boolean;
 };
@@ -145,6 +146,31 @@ export function ProjectForm({ mode, projectId, initialValues }: ProjectFormProps
         ) : (
           <p id="technologies-hint" className="text-sm text-muted">
             Comma-separated, for example Next.js, TypeScript, PostgreSQL
+          </p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <label htmlFor="year" className={labelClass}>
+          Year
+        </label>
+        <input
+          id="year"
+          name="year"
+          type="text"
+          maxLength={40}
+          defaultValue={initialValues.year}
+          aria-invalid={state.fieldErrors?.year ? true : undefined}
+          aria-describedby={state.fieldErrors?.year ? "year-error" : "year-hint"}
+          className={fieldClass}
+        />
+        {state.fieldErrors?.year ? (
+          <p id="year-error" role="alert" className="text-sm text-accent-text">
+            {state.fieldErrors.year}
+          </p>
+        ) : (
+          <p id="year-hint" className="text-sm text-muted">
+            Optional. Shown on the project card, for example 2026 or 2025 — 2026
           </p>
         )}
       </div>

@@ -83,7 +83,7 @@ export async function getPublishedProjects(): Promise<PortfolioProject[]> {
     description: row.description,
     technologies: row.technologies,
     image: row.image || "/images/project-01.svg",
-    year: String(row.createdAt.getFullYear()),
+    year: row.year,
   }));
 }
 

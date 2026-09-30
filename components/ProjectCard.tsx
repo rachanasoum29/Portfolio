@@ -9,12 +9,10 @@ const titleClass =
 export function ProjectCard({
   project,
   layout = "stacked",
-  reverse = false,
   index = 0,
 }: {
   project: PortfolioProject;
   layout?: "split" | "stacked";
-  reverse?: boolean;
   index?: number;
 }) {
   const tech = project.technologies.join(" · ");
@@ -22,7 +20,7 @@ export function ProjectCard({
     <DeviceStage
       src={project.image}
       title={project.title}
-      year={project.year}
+      year={project.year || undefined}
       href={`/work#${project.slug}`}
     />
   );
@@ -30,18 +28,10 @@ export function ProjectCard({
   if (layout === "split") {
     return (
       <article
-        className={`pop pop-view group flex flex-col gap-8 border-b border-line py-14 last:border-b-0 md:py-20 lg:items-start lg:gap-16 lg:py-24 ${
-          reverse ? "lg:flex-row-reverse" : "lg:flex-row"
-        }`}
+        className="pop pop-view group border-b border-line py-6 last:border-b-0 md:py-8 lg:py-10"
         style={popOnScroll(index)}
       >
-        <div className="lg:w-[36%] lg:shrink-0">
-          <p className="font-mono text-sm text-accent-text">{project.number}</p>
-          <h3 className={`mt-4 ${titleClass}`}>{project.title}</h3>
-          <p className="mt-6 font-mono text-[13px] leading-relaxed break-words text-muted">{tech}</p>
-          <p className="mt-6 max-w-sm leading-relaxed text-muted">{project.description}</p>
-        </div>
-        <div className="min-w-0 lg:flex-1">{stage}</div>
+        {stage}
       </article>
     );
   }

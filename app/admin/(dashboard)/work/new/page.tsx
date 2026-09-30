@@ -20,6 +20,7 @@ export default function NewProjectPage() {
           description: "",
           image: "",
           technologies: "",
+          year: "",
           order: 0,
           published: false,
         }}

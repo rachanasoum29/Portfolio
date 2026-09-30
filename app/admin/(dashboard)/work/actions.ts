@@ -16,7 +16,7 @@ import {
 export type ProjectFormState = {
   formError?: string;
   fieldErrors?: Partial<
-    Record<"title" | "slug" | "description" | "image" | "technologies" | "order", string>
+    Record<"title" | "slug" | "description" | "image" | "technologies" | "year" | "order", string>
   >;
 };
 
@@ -26,6 +26,7 @@ type ProjectInput = {
   description: string;
   image: string | null;
   technologies: string[];
+  year: string;
   order: number;
   published: boolean;
 };
@@ -48,6 +49,7 @@ function readProjectInput(formData: FormData): {
   const description = String(formData.get("description") ?? "").trim();
   const image = String(formData.get("image") ?? "").trim();
   const technologiesRaw = String(formData.get("technologies") ?? "");
+  const year = String(formData.get("year") ?? "").trim();
   const orderRaw = String(formData.get("order") ?? "");
   const published = formData.get("published") === "on";
 
@@ -79,6 +81,10 @@ function readProjectInput(formData: FormData): {
     fieldErrors.technologies = "Technologies list is too long.";
   }
 
+  if (year.length > 40) {
+    fieldErrors.year = "Year must be 40 characters or fewer.";
+  }
+
   const order = parseOrder(orderRaw);
   if (order === null) {
     fieldErrors.order = "Enter a whole number between -9999 and 9999.";
@@ -95,6 +101,7 @@ function readProjectInput(formData: FormData): {
       description,
       image: image || null,
       technologies: parseTechnologies(technologiesRaw),
+      year,
       order,
       published,
     },
@@ -133,7 +140,7 @@ export async function createProject(
     if (isUniqueSlugError(error)) {
       return { fieldErrors: { slug: "That slug is already in use." } };
     }
-    console.error("Create project failed");
+    console.error("Create project failed", error);
     return { formError: "Could not save the project. Try again." };
   }
 
@@ -177,7 +184,7 @@ export async function updateProject(
     if (isUniqueSlugError(error)) {
       return { fieldErrors: { slug: "That slug is already in use." } };
     }
-    console.error("Update project failed");
+    console.error("Update project failed", error);
     return { formError: "Could not save the project. Try again." };
   }
 

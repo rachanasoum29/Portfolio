@@ -26,6 +26,7 @@ model Project {
   description  String   @db.Text
   image        String?
   technologies String[] @default([])
+  year         String   @default("")
   githubUrl    String?
   liveUrl      String?
   order        Int      @default(0)

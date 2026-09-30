@@ -37,7 +37,7 @@ export default async function WorkPage() {
               <DeviceStage
                 src={project.image}
                 title={project.title}
-                year={project.year}
+                year={project.year || undefined}
                 href={`/work#${project.slug}`}
                 number={project.number}
                 tech={project.technologies.join(" · ")}
