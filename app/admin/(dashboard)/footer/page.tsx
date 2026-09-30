@@ -19,9 +19,7 @@ export default async function AdminFooterPage() {
         initialValues={{
           facebookUrl: settings.facebookUrl,
           instagramUrl: settings.instagramUrl,
-          telegramUrl: settings.telegramUrl,
           footerYear: settings.footerYear,
-          email: settings.email,
           name: settings.name,
         }}
       />

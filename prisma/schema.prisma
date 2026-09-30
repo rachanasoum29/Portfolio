@@ -78,7 +78,6 @@ model SiteSettings {
   websiteDescription String   @default("") @db.Text
   facebookUrl        String   @default("")
   instagramUrl       String   @default("")
-  telegramUrl        String   @default("")
   footerYear         String   @default("2026")
   updatedAt          DateTime @updatedAt
 }
