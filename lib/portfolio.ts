@@ -151,7 +151,6 @@ export async function getSiteSettings() {
     websiteDescription: row?.websiteDescription || fallbackSite.intro,
     facebookUrl: row?.facebookUrl || "",
     instagramUrl: row?.instagramUrl || "",
-    telegramUrl: row?.telegramUrl || "",
     footerYear: row?.footerYear || fallbackSite.year,
     role: fallbackSite.role,
     year: row?.footerYear || fallbackSite.year,

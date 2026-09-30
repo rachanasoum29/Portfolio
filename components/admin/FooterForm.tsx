@@ -12,9 +12,7 @@ type FooterFormProps = {
   initialValues: {
     facebookUrl: string;
     instagramUrl: string;
-    telegramUrl: string;
     footerYear: string;
-    email: string;
     name: string;
   };
 };
@@ -27,10 +25,8 @@ export function FooterForm({ initialValues }: FooterFormProps) {
   return (
     <form action={action} className="flex max-w-2xl flex-col gap-7" noValidate>
       <div className="border border-line px-5 py-4 text-sm text-muted">
-        Footer brand and email use Settings:{" "}
+        Footer brand name uses Settings:{" "}
         <span className="text-foreground">{initialValues.name || "—"}</span>
-        {" · "}
-        <span className="text-foreground">{initialValues.email || "—"}</span>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -69,27 +65,6 @@ export function FooterForm({ initialValues }: FooterFormProps) {
             {state.fieldErrors.instagramUrl}
           </p>
         ) : null}
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <label htmlFor="telegramUrl" className={labelClass}>
-          Telegram URL
-        </label>
-        <input
-          id="telegramUrl"
-          name="telegramUrl"
-          type="url"
-          defaultValue={initialValues.telegramUrl}
-          placeholder="https://t.me/username"
-          className={fieldClass}
-        />
-        {state.fieldErrors?.telegramUrl ? (
-          <p role="alert" className="text-sm text-accent-text">
-            {state.fieldErrors.telegramUrl}
-          </p>
-        ) : (
-          <p className="text-sm text-muted">Example: https://t.me/username</p>
-        )}
       </div>
 
       <div className="flex flex-col gap-3">

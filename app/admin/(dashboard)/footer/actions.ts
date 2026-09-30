@@ -10,9 +10,7 @@ import { isValidOptionalHttpUrl } from "@/lib/validation";
 export type FooterFormState = {
   formError?: string;
   success?: string;
-  fieldErrors?: Partial<
-    Record<"facebookUrl" | "instagramUrl" | "telegramUrl" | "footerYear", string>
-  >;
+  fieldErrors?: Partial<Record<"facebookUrl" | "instagramUrl" | "footerYear", string>>;
 };
 
 export async function updateFooter(
@@ -26,7 +24,6 @@ export async function updateFooter(
 
   const facebookUrl = String(formData.get("facebookUrl") ?? "").trim();
   const instagramUrl = String(formData.get("instagramUrl") ?? "").trim();
-  const telegramUrl = String(formData.get("telegramUrl") ?? "").trim();
   const footerYear = String(formData.get("footerYear") ?? "").trim();
   const fieldErrors: FooterFormState["fieldErrors"] = {};
 
@@ -35,9 +32,6 @@ export async function updateFooter(
   }
   if (!isValidOptionalHttpUrl(instagramUrl)) {
     fieldErrors.instagramUrl = "Enter a valid http(s) URL.";
-  }
-  if (!isValidOptionalHttpUrl(telegramUrl)) {
-    fieldErrors.telegramUrl = "Enter a valid http(s) URL, for example https://t.me/username.";
   }
   if (!footerYear) {
     fieldErrors.footerYear = "Enter a copyright year.";
@@ -55,7 +49,6 @@ export async function updateFooter(
       data: {
         facebookUrl,
         instagramUrl,
-        telegramUrl,
         footerYear,
       },
     });

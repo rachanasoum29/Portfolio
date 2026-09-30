@@ -3,7 +3,6 @@ export const site = {
   role: "Full Stack Developer",
   email: "rachanasoum59@gmail.com",
   phone: "[YOUR PHONE]",
-  telegram: "[YOUR TELEGRAM]",
   linkedin: "[YOUR LINKEDIN]",
  
   year: "2026",

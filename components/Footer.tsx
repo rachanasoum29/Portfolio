@@ -6,7 +6,6 @@ const quietLinkClass =
 
 export async function Footer() {
   const settings = await getSiteSettings();
-  const emailHref = settings.email.includes("@") ? `mailto:${settings.email}` : null;
 
   return (
     <footer className="border-t border-line">
@@ -18,12 +17,6 @@ export async function Footer() {
           </li>
           <li>
             <FooterLink href={settings.instagramUrl || null} label="Instagram" />
-          </li>
-          <li>
-            <FooterLink href={settings.telegramUrl || null} label="Telegram" />
-          </li>
-          <li>
-            <FooterLink href={emailHref} label="Email" />
           </li>
         </ul>
         <p className="text-sm text-muted">
