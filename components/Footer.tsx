@@ -1,27 +1,63 @@
 import { Container } from "@/components/Container";
-import { PlaceholderLink } from "@/components/PlaceholderLink";
-import { site } from "@/data/site";
+import { getSiteSettings } from "@/lib/portfolio";
 
-export function Footer() {
+const quietLinkClass =
+  "group inline-flex min-h-11 items-center gap-2 text-sm text-muted transition-colors duration-200 hover:text-accent-text";
+
+export async function Footer() {
+  const settings = await getSiteSettings();
+  const emailHref = settings.email.includes("@") ? `mailto:${settings.email}` : null;
+
   return (
     <footer className="border-t border-line">
       <Container className="flex flex-col gap-8 py-12 md:flex-row md:items-end md:justify-between md:py-16">
-        <p className="text-2xl font-medium tracking-[-0.03em]">{site.name}</p>
+        <p className="text-2xl font-medium tracking-[-0.03em]">{settings.name}</p>
         <ul className="flex flex-col sm:flex-row sm:items-center sm:gap-8">
           <li>
-            <PlaceholderLink label="Facebook" variant="quiet" />
+            <FooterLink href={settings.facebookUrl || null} label="Facebook" />
           </li>
           <li>
-            <PlaceholderLink label="Instagram" variant="quiet" />
+            <FooterLink href={settings.instagramUrl || null} label="Instagram" />
           </li>
           <li>
-            <PlaceholderLink label="Email" variant="quiet" />
+            <FooterLink href={settings.telegramUrl || null} label="Telegram" />
+          </li>
+          <li>
+            <FooterLink href={emailHref} label="Email" />
           </li>
         </ul>
         <p className="text-sm text-muted">
-          © {site.year} {site.name}
+          © {settings.year} {settings.name}
         </p>
       </Container>
     </footer>
+  );
+}
+
+function FooterLink({ href, label }: { href: string | null; label: string }) {
+  if (!href) {
+    return (
+      <span className={`${quietLinkClass} cursor-default opacity-60`}>
+        {label}
+        <span aria-hidden="true" className="arrow-shift">
+          ↗
+        </span>
+      </span>
+    );
+  }
+
+  const external = href.startsWith("http");
+
+  return (
+    <a
+      href={href}
+      className={quietLinkClass}
+      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+    >
+      {label}
+      <span aria-hidden="true" className="arrow-shift">
+        ↗
+      </span>
+    </a>
   );
 }

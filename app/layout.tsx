@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
-import { Footer } from "@/components/Footer";
-import { Navbar } from "@/components/Navbar";
-import { site } from "@/data/site";
+import { getSiteSettings } from "@/lib/portfolio";
 import "./globals.css";
 
 const themeScript = `(function(){try{var t=localStorage.getItem("theme");var d=t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);}catch(e){}})();`;
@@ -18,13 +16,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: site.name,
-    template: `%s — ${site.name}`,
-  },
-  description: site.intro,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  return {
+    title: {
+      default: settings.websiteTitle || settings.name,
+      template: `%s — ${settings.websiteTitle || settings.name}`,
+    },
+    description: settings.websiteDescription || settings.intro,
+  };
+}
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -37,14 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Script id="theme-init" strategy="beforeInteractive">
           {themeScript}
         </Script>
-        <a href="#content" className="skip-link">
-          Skip to content
-        </a>
-        <Navbar />
-        <main id="content" className="min-w-0 flex-1 pt-14">
-          {children}
-        </main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

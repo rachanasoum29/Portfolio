@@ -1,6 +1,6 @@
 import { MediaFrame } from "@/components/MediaFrame";
 import { popStyle } from "@/components/popStyle";
-import type { Experiment } from "@/data/playground";
+import type { PortfolioExperiment } from "@/lib/portfolio";
 
 export function PlaygroundCard({
   experiment,
@@ -9,7 +9,7 @@ export function PlaygroundCard({
   soft = false,
   index = 0,
 }: {
-  experiment: Experiment;
+  experiment: PortfolioExperiment;
   span: string;
   aspect: string;
   soft?: boolean;

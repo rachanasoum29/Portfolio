@@ -2,9 +2,8 @@
 
 import { type MouseEvent } from "react";
 import { popStyle } from "@/components/popStyle";
-import { site } from "@/data/site";
 
-export function ContactLinks() {
+export function ContactLinks({ email }: { email: string }) {
   return (
     <div>
       <h2
@@ -17,11 +16,11 @@ export function ContactLinks() {
       </h2>
       <p className="pop mt-8" style={popStyle(4)}>
         <a
-          href={mailHref(site.email)}
+          href={mailHref(email)}
           className="contact-mail inline-block max-w-full break-words text-2xl font-medium tracking-[-0.03em] text-foreground sm:text-4xl"
           onClick={keepPlaceholder}
         >
-          {site.email}
+          {email}
         </a>
       </p>
     </div>

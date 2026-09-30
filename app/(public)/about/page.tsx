@@ -3,11 +3,12 @@ import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SkillMark } from "@/components/SkillMark";
 import { popStyle } from "@/components/popStyle";
-import { about, skillGroups } from "@/data/about";
+import { about as fallbackAbout, skillGroups as fallbackSkillGroups } from "@/data/about";
+import { getAboutContent } from "@/lib/portfolio";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "About a junior web developer. Personal details are placeholders.",
+  description: "About a junior web developer.",
 };
 
 const labelClass = "text-[11px] font-medium uppercase tracking-[0.22em] text-accent-text";
@@ -16,7 +17,23 @@ function indexLabel(index: number) {
   return String(index + 1).padStart(2, "0");
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const content = await getAboutContent();
+  const paragraphs =
+    content && content.paragraphs.length > 0
+      ? content.paragraphs
+      : [...fallbackAbout.paragraphs];
+  const skillGroups =
+    content && content.skillGroups.length > 0 ? content.skillGroups : fallbackSkillGroups;
+  const experience =
+    content && content.experience.length > 0
+      ? content.experience
+      : [...fallbackAbout.experience];
+  const education =
+    content && content.education.length > 0
+      ? content.education
+      : [...fallbackAbout.education];
+
   return (
     <Container className="pt-16 pb-20 md:pt-24 md:pb-28 lg:pb-36">
       <div className="pop" style={popStyle(0)}>
@@ -27,8 +44,8 @@ export default function AboutPage() {
           About
         </h2>
         <div className="space-y-6 text-xl leading-relaxed md:text-2xl">
-          {about.paragraphs.map((paragraph, index) => (
-            <p key={paragraph} className="pop" style={popStyle(index + 1)}>
+          {paragraphs.map((paragraph, index) => (
+            <p key={`${index}-${paragraph.slice(0, 24)}`} className="pop" style={popStyle(index + 1)}>
               {paragraph}
             </p>
           ))}
@@ -58,9 +75,9 @@ export default function AboutPage() {
           Experience
         </h2>
         <div className="mt-6 border-t border-line">
-          {about.experience.map((item, index) => (
+          {experience.map((item, index) => (
             <article
-              key={item.role}
+              key={`${item.role}-${item.organization}-${index}`}
               className="pop grid gap-2 border-b border-line py-8 md:grid-cols-12 md:items-baseline md:gap-x-8 md:py-10"
               style={popStyle(index + 1)}
             >
@@ -80,9 +97,9 @@ export default function AboutPage() {
           Education
         </h2>
         <div className="mt-6 border-t border-line">
-          {about.education.map((item, index) => (
+          {education.map((item, index) => (
             <article
-              key={item.program}
+              key={`${item.program}-${item.institution}-${index}`}
               className="pop grid gap-2 border-b border-line py-8 md:grid-cols-12 md:items-baseline md:gap-x-8 md:py-10"
               style={popStyle(index + 1)}
             >

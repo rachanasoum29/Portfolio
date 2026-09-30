@@ -1,7 +1,7 @@
 import { DeviceStage } from "@/components/DeviceStage";
 import { PlaceholderLink } from "@/components/PlaceholderLink";
 import { popOnScroll } from "@/components/popStyle";
-import type { Project } from "@/data/projects";
+import type { PortfolioProject } from "@/lib/portfolio";
 
 const titleClass =
   "max-w-[11em] text-[clamp(2.1rem,4.6vw,4.25rem)] font-medium uppercase leading-[0.9] tracking-[-0.035em]";
@@ -12,7 +12,7 @@ export function ProjectCard({
   reverse = false,
   index = 0,
 }: {
-  project: Project;
+  project: PortfolioProject;
   layout?: "split" | "stacked";
   reverse?: boolean;
   index?: number;
