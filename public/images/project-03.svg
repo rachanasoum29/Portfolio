@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" fill="none">
+  <rect width="1600" height="900" fill="#FFF8F5"/>
+  <text x="80" y="78" fill="#FF6F61" font-family="ui-monospace, monospace" font-size="22" letter-spacing="4">03  PLACEHOLDER</text>
+  <rect x="80" y="120" width="280" height="18" fill="#202020"/>
+  <rect x="80" y="180" width="900" height="620" stroke="#202020"/>
+  <g stroke="#202020" stroke-opacity="0.35">
+    <path d="M80 280h900M80 380h900M80 480h900M80 580h900M80 680h900"/>
+    <path d="M230 180v620M380 180v620M530 180v620M680 180v620M830 180v620"/>
+  </g>
+  <rect x="240" y="300" width="120" height="60" fill="#202020"/>
+  <rect x="540" y="400" width="120" height="60" fill="#FF6F61"/>
+  <rect x="390" y="500" width="120" height="60" fill="#202020" opacity="0.35"/>
+  <rect x="690" y="600" width="120" height="60" fill="#202020"/>
+  <rect x="1040" y="180" width="480" height="280" fill="#202020"/>
+  <rect x="1080" y="230" width="220" height="16" fill="#FFFFFF"/>
+  <rect x="1080" y="266" width="320" height="10" fill="#FFFFFF" opacity="0.45"/>
+  <rect x="1040" y="490" width="480" height="310" stroke="#202020"/>
+  <rect x="1080" y="540" width="400" height="12" fill="#202020" opacity="0.3"/>
+  <rect x="1080" y="572" width="340" height="12" fill="#202020" opacity="0.2"/>
+  <rect x="1080" y="680" width="180" height="48" fill="#FF6F61"/>
+</svg>
