@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# Prisma Client output
+/generated
 
 # vercel
 .vercel
@@ -42,3 +46,7 @@ next-env.d.ts
 
 # local screenshot run (headless Chrome profile + captures)
 /.theme-check/
+
+# uploaded admin images (kept local; see lib/uploads.ts)
+/public/uploads/*
+!/public/uploads/.gitkeep

@@ -1,0 +1,83 @@
+// Portfolio content models.
+// Image fields store a path or URL. File storage is added in a later phase.
+// About and SiteSettings are single rows. The app always uses id "default".
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Project {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  description  String   @db.Text
+  image        String?
+  technologies String[] @default([])
+  githubUrl    String?
+  liveUrl      String?
+  order        Int      @default(0)
+  published    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([published, order])
+}
+
+model PlaygroundItem {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  image       String?
+  technology  String   @default("")
+  demoUrl     String?
+  order       Int      @default(0)
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([published, order])
+}
+
+model About {
+  id           String   @id @default("default")
+  profileImage String?
+  // Plain text. A blank line separates paragraphs.
+  biography    String   @default("") @db.Text
+  // AboutSkillGroup[] from lib/content.ts
+  skills       Json     @default("[]")
+  // AboutExperience[] from lib/content.ts
+  experience   Json     @default("[]")
+  // AboutEducation[] from lib/content.ts
+  education    Json     @default("[]")
+  updatedAt    DateTime @updatedAt
+}
+
+model SiteSettings {
+  id                 String   @id @default("default")
+  name               String   @default("")
+  email              String   @default("")
+  githubUrl          String   @default("")
+  linkedinUrl        String   @default("")
+  cvUrl              String   @default("")
+  websiteTitle       String   @default("")
+  websiteDescription String   @default("") @db.Text
+  facebookUrl        String   @default("")
+  instagramUrl       String   @default("")
+  telegramUrl        String   @default("")
+  footerYear         String   @default("2026")
+  updatedAt          DateTime @updatedAt
+}
