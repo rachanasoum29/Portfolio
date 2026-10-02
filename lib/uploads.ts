@@ -31,7 +31,7 @@ export function isAllowedUploadType(type: string) {
 export function isManagedUploadPath(value: string) {
   return (
     (value.startsWith(`${UPLOAD_URL_PREFIX}/`) && !value.includes("..")) ||
-    value.includes("public.blob.vercel-storage.com")
+    value.includes(".blob.vercel-storage.com")
   );
 }
 
