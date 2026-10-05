@@ -9,6 +9,7 @@ import { projects as fallbackProjectsList } from "@/data/projects";
 import { experiments as fallbackPlaygroundList } from "@/data/playground";
 import { about as fallbackAbout, skillGroups as fallbackSkillGroups } from "@/data/about";
 import { skillIconMap } from "@/lib/skill-icons";
+import { slugify } from "@/lib/validation";
 import type { SimpleIcon } from "simple-icons";
 
 export type PortfolioProject = {
@@ -122,6 +123,17 @@ export async function getSelectedProjects(limit = 3): Promise<PortfolioProject[]
   return projects.slice(0, limit);
 }
 
+function getFallbackPlayground(): PortfolioExperiment[] {
+  return fallbackPlaygroundList.map((item, index) => ({
+    number: item.number || indexLabel(index),
+    slug: slugify(item.title) || `experiment-${index + 1}`,
+    title: item.title,
+    description: item.description,
+    technology: item.technology,
+    image: item.image,
+  }));
+}
+
 export async function getPublishedPlayground(): Promise<PortfolioExperiment[]> {
   try {
     const rows = await prisma.playgroundItem.findMany({
@@ -130,7 +142,7 @@ export async function getPublishedPlayground(): Promise<PortfolioExperiment[]> {
     });
 
     if (rows.length === 0) {
-      return fallbackPlaygroundList;
+      return getFallbackPlayground();
     }
 
     return rows.map((row, index) => ({
@@ -143,7 +155,7 @@ export async function getPublishedPlayground(): Promise<PortfolioExperiment[]> {
     }));
   } catch (error) {
     console.warn("Could not query database for playground items, using fallback:", error);
-    return fallbackPlaygroundList;
+    return getFallbackPlayground();
   }
 }
 
