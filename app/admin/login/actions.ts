@@ -48,15 +48,35 @@ export async function login(_state: LoginState, formData: FormData): Promise<Log
   } catch (error) {
     console.error("Admin login failed:", error);
     const errorMessage = error instanceof Error ? error.message : "";
+    const currentDb = (process.env.DATABASE_URL || "").trim();
+
+    if (
+      currentDb.includes("127.0.0.1") ||
+      currentDb.includes("localhost") ||
+      currentDb.includes("USER:PASSWORD")
+    ) {
+      return {
+        formError:
+          "DATABASE_URL is set to localhost/placeholder in your Vercel settings. Please update DATABASE_URL in Vercel to your Neon PostgreSQL URL and redeploy.",
+      };
+    }
+
     if (
       error instanceof AuthConfigError ||
       (error instanceof Error && error.name === "AuthConfigError") ||
       errorMessage.includes("AUTH_SECRET")
     ) {
-      return { formError: "Admin sign-in is not configured. Please check AUTH_SECRET." };
+      return { formError: "Admin sign-in is not configured. Please check AUTH_SECRET in Vercel." };
     }
-    if (errorMessage.includes("P1001") || errorMessage.includes("DatabaseNotReachable") || errorMessage.includes("Can't reach database")) {
-      return { formError: "Database connection failed. Please check your DATABASE_URL in Vercel." };
+    if (
+      errorMessage.includes("P1001") ||
+      errorMessage.includes("DatabaseNotReachable") ||
+      errorMessage.includes("Can't reach database")
+    ) {
+      const summary = errorMessage.split("\n")[0];
+      return {
+        formError: `Database connection failed (${summary}). Check your DATABASE_URL in Vercel.`,
+      };
     }
     if (errorMessage.includes("P1000") || errorMessage.includes("Authentication failed")) {
       return { formError: "Database credentials failed. Please check your DATABASE_URL in Vercel." };
