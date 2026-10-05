@@ -240,24 +240,57 @@ export async function getSiteSettings() {
 }
 
 export async function ensureAboutRow() {
-  return prisma.about.upsert({
-    where: { id: "default" },
-    update: {},
-    create: { id: "default" },
-  });
+  try {
+    return await prisma.about.upsert({
+      where: { id: "default" },
+      update: {},
+      create: { id: "default" },
+    });
+  } catch (error) {
+    console.warn("Could not ensure about row in database, using fallback:", error);
+    return {
+      id: "default",
+      biography: fallbackAbout.paragraphs.join("\n\n"),
+      profileImage: null,
+      skills: fallbackSkillGroups as unknown as any,
+      experience: fallbackAbout.experience as unknown as any,
+      education: fallbackAbout.education as unknown as any,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  }
 }
 
 export async function ensureSiteSettingsRow() {
-  return prisma.siteSettings.upsert({
-    where: { id: "default" },
-    update: {},
-    create: {
+  try {
+    return await prisma.siteSettings.upsert({
+      where: { id: "default" },
+      update: {},
+      create: {
+        id: "default",
+        name: fallbackSite.name,
+        email: fallbackSite.email,
+        websiteTitle: fallbackSite.name,
+        websiteDescription: fallbackSite.intro,
+        linkedinUrl: fallbackSite.linkedin.startsWith("[") ? "" : fallbackSite.linkedin,
+      },
+    });
+  } catch (error) {
+    console.warn("Could not ensure site settings row in database, using fallback:", error);
+    return {
       id: "default",
       name: fallbackSite.name,
       email: fallbackSite.email,
+      githubUrl: "",
+      linkedinUrl: fallbackSite.linkedin.startsWith("[") ? "" : fallbackSite.linkedin,
+      cvUrl: "",
       websiteTitle: fallbackSite.name,
       websiteDescription: fallbackSite.intro,
-      linkedinUrl: fallbackSite.linkedin.startsWith("[") ? "" : fallbackSite.linkedin,
-    },
-  });
+      facebookUrl: "",
+      instagramUrl: "",
+      footerYear: fallbackSite.year,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  }
 }
