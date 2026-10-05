@@ -45,16 +45,27 @@ export async function login(_state: LoginState, formData: FormData): Promise<Log
       return { formError: "Invalid email or password." };
     }
     await setSession(admin.id, admin.passwordHash);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Admin login failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : String(error ?? "");
+    // Robust error string extraction
+    const rawMessage =
+      error instanceof Error
+        ? error.message
+        : typeof error === "string"
+          ? error
+          : typeof error === "object" && error !== null
+            ? JSON.stringify(error)
+            : "";
+
+    const errorMessage = rawMessage.trim();
     const currentDb = process.env.DATABASE_URL ?? "";
 
     const lines = errorMessage
       .split("\n")
       .map((l) => l.trim())
       .filter(Boolean);
+
     const summary =
       lines.find(
         (l) =>
@@ -64,8 +75,17 @@ export async function login(_state: LoginState, formData: FormData): Promise<Log
           l.length > 5,
       ) ||
       lines[0] ||
-      "Unable to connect to database";
+      "Connection timed out or unreachable";
 
+    // 1. Missing or unconfigured DATABASE_URL
+    if (!currentDb) {
+      return {
+        formError:
+          "DATABASE_URL is not defined in your Vercel environment variables. Add it in Vercel Project Settings > Environment Variables.",
+      };
+    }
+
+    // 2. Localhost or template placeholder detected
     if (
       currentDb.includes("127.0.0.1") ||
       currentDb.includes("localhost") ||
@@ -73,25 +93,30 @@ export async function login(_state: LoginState, formData: FormData): Promise<Log
     ) {
       return {
         formError:
-          "DATABASE_URL is set to localhost/placeholder in your Vercel settings. Please update DATABASE_URL in Vercel to your Neon PostgreSQL URL and redeploy.",
+          "DATABASE_URL is set to localhost/placeholder in your Vercel settings. Update DATABASE_URL in Vercel to your Neon PostgreSQL pooled URL and redeploy.",
       };
     }
 
-    if (currentDb && !currentDb.includes("@")) {
+    // 3. Malformed connection string
+    if (!currentDb.includes("@")) {
       return {
         formError:
-          "DATABASE_URL is missing the '@' symbol between password and host (e.g. postgresql://user:password@host...). Please check your DATABASE_URL in Vercel.",
+          "DATABASE_URL is missing the '@' symbol between password and host (e.g., postgresql://user:password@host...). Please check your DATABASE_URL in Vercel.",
       };
     }
 
+    // 4. Session / Auth secret errors
     if (
       error instanceof AuthConfigError ||
       (error instanceof Error && error.name === "AuthConfigError") ||
       errorMessage.includes("AUTH_SECRET")
     ) {
-      return { formError: "Admin sign-in is not configured. Please check AUTH_SECRET in Vercel." };
+      return {
+        formError: "Admin sign-in is not configured. Please check AUTH_SECRET in Vercel.",
+      };
     }
 
+    // 5. Database reachability / timeout / compute suspended
     if (
       errorMessage.includes("P1001") ||
       errorMessage.includes("DatabaseNotReachable") ||
@@ -100,10 +125,11 @@ export async function login(_state: LoginState, formData: FormData): Promise<Log
       errorMessage.includes("ECONNREFUSED")
     ) {
       return {
-        formError: `Database connection failed (${summary}). Make sure your Neon compute is active (not suspended/idle) and DATABASE_URL in Vercel is correct.`,
+        formError: `Database connection failed (${summary}). Make sure your Neon compute is active (not suspended/idle) and DATABASE_URL in Vercel uses the pooled connection string.`,
       };
     }
 
+    // 6. Bad credentials
     if (
       errorMessage.includes("P1000") ||
       errorMessage.includes("Authentication failed") ||
