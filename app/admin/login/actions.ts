@@ -48,7 +48,6 @@ export async function login(_state: LoginState, formData: FormData): Promise<Log
   } catch (error) {
     console.error("Admin login failed:", error);
 
-    // Extract the error message and the database connection string
     const errorMessage = error instanceof Error ? error.message : String(error ?? "");
     const currentDb = process.env.DATABASE_URL ?? "";
 
