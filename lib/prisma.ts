@@ -5,17 +5,26 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-function createPrismaClient() {
-  const rawUrl = process.env.DATABASE_URL;
-
-  let connectionString = rawUrl?.trim();
+function sanitizeConnectionString(rawUrl?: string): string | undefined {
+  if (!rawUrl) return undefined;
+  let s = rawUrl.trim();
   if (
-    connectionString &&
-    ((connectionString.startsWith('"') && connectionString.endsWith('"')) ||
-      (connectionString.startsWith("'") && connectionString.endsWith("'")))
+    (s.startsWith('"') && s.endsWith('"')) ||
+    (s.startsWith("'") && s.endsWith("'"))
   ) {
-    connectionString = connectionString.slice(1, -1).trim();
+    s = s.slice(1, -1).trim();
   }
+  // Strip channel_binding (incompatible with node-postgres/adapter-pg over connection poolers)
+  s = s
+    .replace(/&channel_binding=[^&]+/g, "")
+    .replace(/\?channel_binding=[^&]+&?/g, "?")
+    .replace(/\?$/, "");
+
+  return s;
+}
+
+function createPrismaClient() {
+  const connectionString = sanitizeConnectionString(process.env.DATABASE_URL);
 
   if (!connectionString) {
     console.warn(
@@ -28,7 +37,10 @@ function createPrismaClient() {
     "postgresql://postgres:postgres@localhost:5432/fallback?sslmode=disable";
 
   return new PrismaClient({
-    adapter: new PrismaPg({ connectionString: effectiveUrl }),
+    adapter: new PrismaPg({
+      connectionString: effectiveUrl,
+      connectionTimeoutMillis: 25000,
+    }),
   });
 }
 

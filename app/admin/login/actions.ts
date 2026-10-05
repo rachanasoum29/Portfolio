@@ -47,8 +47,20 @@ export async function login(_state: LoginState, formData: FormData): Promise<Log
     await setSession(admin.id, admin.passwordHash);
   } catch (error) {
     console.error("Admin login failed:", error);
-    const errorMessage = error instanceof Error ? error.message : "";
-    const currentDb = (process.env.DATABASE_URL || "").trim();
+    const lines = errorMessage
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean);
+    const summary =
+      lines.find(
+        (l) =>
+          !l.startsWith("Invalid `") &&
+          !l.startsWith("-->") &&
+          !l.startsWith("at ") &&
+          l.length > 5,
+      ) ||
+      lines[0] ||
+      "Unable to connect to database";
 
     if (
       currentDb.includes("127.0.0.1") ||
@@ -61,6 +73,13 @@ export async function login(_state: LoginState, formData: FormData): Promise<Log
       };
     }
 
+    if (currentDb && !currentDb.includes("@")) {
+      return {
+        formError:
+          "DATABASE_URL is missing the '@' symbol between password and host (e.g. postgresql://user:password@host...). Please check your DATABASE_URL in Vercel.",
+      };
+    }
+
     if (
       error instanceof AuthConfigError ||
       (error instanceof Error && error.name === "AuthConfigError") ||
@@ -68,20 +87,31 @@ export async function login(_state: LoginState, formData: FormData): Promise<Log
     ) {
       return { formError: "Admin sign-in is not configured. Please check AUTH_SECRET in Vercel." };
     }
+
     if (
       errorMessage.includes("P1001") ||
       errorMessage.includes("DatabaseNotReachable") ||
-      errorMessage.includes("Can't reach database")
+      errorMessage.includes("Can't reach database") ||
+      errorMessage.includes("ETIMEDOUT") ||
+      errorMessage.includes("ECONNREFUSED")
     ) {
-      const summary = errorMessage.split("\n")[0];
       return {
-        formError: `Database connection failed (${summary}). Check your DATABASE_URL in Vercel.`,
+        formError: `Database connection failed (${summary}). Make sure your Neon compute is active (not suspended/idle) and DATABASE_URL in Vercel is correct.`,
       };
     }
-    if (errorMessage.includes("P1000") || errorMessage.includes("Authentication failed")) {
-      return { formError: "Database credentials failed. Please check your DATABASE_URL in Vercel." };
+
+    if (
+      errorMessage.includes("P1000") ||
+      errorMessage.includes("Authentication failed") ||
+      errorMessage.includes("password authentication failed")
+    ) {
+      return {
+        formError:
+          "Database password incorrect. Click 'Show password' in Neon to verify the password in your DATABASE_URL in Vercel.",
+      };
     }
-    return { formError: errorMessage || "Something went wrong. Try again." };
+
+    return { formError: summary || "Something went wrong. Try again." };
   }
 
   redirect("/admin");
