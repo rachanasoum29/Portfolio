@@ -46,11 +46,22 @@ export async function login(_state: LoginState, formData: FormData): Promise<Log
     }
     await setSession(admin.id, admin.passwordHash);
   } catch (error) {
-    if (error instanceof AuthConfigError) {
-      return { formError: "Admin sign-in is not configured." };
+    console.error("Admin login failed:", error);
+    const errorMessage = error instanceof Error ? error.message : "";
+    if (
+      error instanceof AuthConfigError ||
+      (error instanceof Error && error.name === "AuthConfigError") ||
+      errorMessage.includes("AUTH_SECRET")
+    ) {
+      return { formError: "Admin sign-in is not configured. Please check AUTH_SECRET." };
     }
-    console.error("Admin login failed");
-    return { formError: "Something went wrong. Try again." };
+    if (errorMessage.includes("P1001") || errorMessage.includes("DatabaseNotReachable") || errorMessage.includes("Can't reach database")) {
+      return { formError: "Database connection failed. Please check your DATABASE_URL in Vercel." };
+    }
+    if (errorMessage.includes("P1000") || errorMessage.includes("Authentication failed")) {
+      return { formError: "Database credentials failed. Please check your DATABASE_URL in Vercel." };
+    }
+    return { formError: errorMessage || "Something went wrong. Try again." };
   }
 
   redirect("/admin");
