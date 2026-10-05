@@ -47,16 +47,24 @@ export async function saveUploadedImage(file: File, folder = "projects") {
   const extension = ALLOWED_TYPES[file.type];
   const filename = `${Date.now()}-${randomBytes(6).toString("hex")}.${extension}`;
 
+  const hasRealBlobToken =
+    Boolean(process.env.BLOB_READ_WRITE_TOKEN) &&
+    process.env.BLOB_READ_WRITE_TOKEN !== "blob_rw_token_1234567890";
+
   // If a real Vercel Blob token is configured, upload to Vercel Blob Storage
-  if (
-    process.env.BLOB_READ_WRITE_TOKEN &&
-    process.env.BLOB_READ_WRITE_TOKEN !== "blob_rw_token_1234567890"
-  ) {
+  if (hasRealBlobToken) {
     const blobPath = `${folder}/${filename}`;
     const { url } = await put(blobPath, file, {
       access: "public",
     });
     return url;
+  }
+
+  // In production (Vercel/serverless), the filesystem is read-only and ephemeral
+  if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+    throw new UploadError(
+      "Vercel Blob Storage is not configured. Please create a Blob Store in your Vercel Dashboard (Storage -> Create Database -> Blob) and link it to this project."
+    );
   }
 
   // Local storage fallback

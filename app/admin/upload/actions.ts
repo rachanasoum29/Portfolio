@@ -35,13 +35,25 @@ export async function uploadImage(formData: FormData): Promise<UploadImageState>
     
     // Check for common connection/network/Vercel issues
     const errorMessage = error instanceof Error ? error.message : "";
+    if (errorMessage.includes("EROFS") || errorMessage.includes("read-only file system")) {
+      return {
+        error:
+          "Vercel Blob Storage is not configured. Please connect a Blob Store in your Vercel Dashboard (Storage -> Create Database -> Blob).",
+      };
+    }
     if (errorMessage.includes("P1001") || errorMessage.includes("DatabaseNotReachable")) {
       return { error: "Database connection failed. Please try again." };
     }
     if (errorMessage.includes("payload too large") || errorMessage.includes("413")) {
       return { error: "Image file size is too large (max 4.5MB on Vercel)." };
     }
+    if (errorMessage.includes("BLOB_READ_WRITE_TOKEN") || errorMessage.includes("Vercel Blob")) {
+      return {
+        error:
+          "Blob store token is missing or invalid. Please check BLOB_READ_WRITE_TOKEN in your Vercel settings.",
+      };
+    }
     
-    return { error: "Could not upload the image. Please try again." };
+    return { error: errorMessage || "Could not upload the image. Please try again." };
   }
 }

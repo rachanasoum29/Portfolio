@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SkillMark } from "@/components/SkillMark";
@@ -39,18 +40,42 @@ export default async function AboutPage() {
       <div className="pop" style={popStyle(0)}>
         <SectionHeading label="Profile" title="About me" titleAs="h1" />
       </div>
-      <section aria-labelledby="about-copy" className="mt-12 max-w-3xl md:mt-16">
-        <h2 id="about-copy" className="sr-only">
-          About
-        </h2>
-        <div className="space-y-6 text-xl leading-relaxed md:text-2xl">
-          {paragraphs.map((paragraph, index) => (
-            <p key={`${index}-${paragraph.slice(0, 24)}`} className="pop" style={popStyle(index + 1)}>
-              {paragraph}
-            </p>
-          ))}
-        </div>
-      </section>
+      <div className="mt-12 grid gap-10 md:mt-16 md:grid-cols-12 md:items-start lg:gap-16">
+        {content?.profileImage ? (
+          <div className="pop md:col-span-4" style={popStyle(1)}>
+            <div className="relative aspect-square max-w-xs overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
+              <Image
+                src={content.profileImage}
+                alt="Profile picture"
+                fill
+                unoptimized
+                priority
+                className="object-cover"
+                sizes="(min-width: 768px) 320px, 100vw"
+              />
+            </div>
+          </div>
+        ) : null}
+        <section
+          aria-labelledby="about-copy"
+          className={content?.profileImage ? "md:col-span-8" : "max-w-3xl"}
+        >
+          <h2 id="about-copy" className="sr-only">
+            About
+          </h2>
+          <div className="space-y-6 text-xl leading-relaxed md:text-2xl">
+            {paragraphs.map((paragraph, index) => (
+              <p
+                key={`${index}-${paragraph.slice(0, 24)}`}
+                className="pop"
+                style={popStyle(index + (content?.profileImage ? 2 : 1))}
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </section>
+      </div>
       <section aria-labelledby="skills-heading" className="mt-16 flex flex-col gap-10 md:mt-24 md:gap-12">
         <h2 id="skills-heading" className="sr-only">
           Skills

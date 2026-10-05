@@ -24,6 +24,9 @@ export function ImageUpload({
   const [pending, startTransition] = useTransition();
   const [uploadError, setUploadError] = useState<string | null>(null);
 
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [urlInputValue, setUrlInputValue] = useState("");
+
   function openPicker() {
     inputRef.current?.click();
   }
@@ -67,10 +70,13 @@ export function ImageUpload({
       />
 
       {value ? (
-        <div className="overflow-hidden border border-line">
-          {/* Preview for local or uploaded paths */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={value} alt="" className="max-h-64 w-full object-cover" />
+        <div className="space-y-1">
+          <div className="overflow-hidden border border-line">
+            {/* Preview for local or uploaded paths */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={value} alt="" className="max-h-64 w-full object-cover" />
+          </div>
+          <p className="truncate font-mono text-[11px] text-muted">{value}</p>
         </div>
       ) : (
         <div className="flex min-h-40 items-center justify-center border border-dashed border-line px-4 text-sm text-muted">
@@ -78,14 +84,25 @@ export function ImageUpload({
         </div>
       )}
 
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap items-center gap-4">
         <button
           type="button"
           onClick={openPicker}
           disabled={pending}
           className="text-[12px] font-medium uppercase tracking-[0.16em] text-accent-text transition-colors hover:text-foreground disabled:opacity-50"
         >
-          {pending ? "Uploading…" : value ? "Replace image" : "Upload image"}
+          {pending ? "Uploading…" : value ? "Replace image" : "Upload file"}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setShowUrlInput(!showUrlInput);
+            setUrlInputValue(value.startsWith("http") ? value : "");
+          }}
+          disabled={pending}
+          className="text-[12px] font-medium uppercase tracking-[0.16em] text-muted transition-colors hover:text-accent-text disabled:opacity-50"
+        >
+          {showUrlInput ? "Hide URL input" : "Or paste image URL"}
         </button>
         {value ? (
           <button
@@ -93,6 +110,7 @@ export function ImageUpload({
             onClick={() => {
               setUploadError(null);
               onChange("");
+              setUrlInputValue("");
             }}
             disabled={pending}
             className="text-[12px] font-medium uppercase tracking-[0.16em] text-muted transition-colors hover:text-accent-text disabled:opacity-50"
@@ -101,6 +119,30 @@ export function ImageUpload({
           </button>
         ) : null}
       </div>
+
+      {showUrlInput ? (
+        <div className="flex items-center gap-2 pt-1">
+          <input
+            type="url"
+            placeholder="https://example.com/image.jpg"
+            value={urlInputValue}
+            onChange={(e) => setUrlInputValue(e.target.value)}
+            className="w-full min-h-10 border-0 border-b border-line bg-transparent px-0 py-2 text-sm text-foreground transition-colors placeholder:text-muted focus:border-accent"
+          />
+          <button
+            type="button"
+            onClick={() => {
+              if (urlInputValue.trim()) {
+                setUploadError(null);
+                onChange(urlInputValue.trim());
+              }
+            }}
+            className="shrink-0 text-[11px] font-medium uppercase tracking-[0.16em] text-accent-text hover:text-foreground"
+          >
+            Apply URL
+          </button>
+        </div>
+      ) : null}
 
       {message ? (
         <p role="alert" className="text-sm text-accent-text">
