@@ -8,8 +8,15 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminDashboardPage() {
-  const [projectCount, playgroundCount, publishedProjects, publishedPlayground, recentProjects] =
-    await Promise.all([
+  let projectCount = 0;
+  let playgroundCount = 0;
+  let publishedProjects = 0;
+  let publishedPlayground = 0;
+  let recentProjects: { id: string; title: string; published: boolean; updatedAt: Date }[] = [];
+  let dbError: string | null = null;
+
+  try {
+    const results = await Promise.all([
       prisma.project.count(),
       prisma.playgroundItem.count(),
       prisma.project.count({ where: { published: true } }),
@@ -25,6 +32,11 @@ export default async function AdminDashboardPage() {
         },
       }),
     ]);
+    [projectCount, playgroundCount, publishedProjects, publishedPlayground, recentProjects] = results;
+  } catch (error) {
+    console.error("Admin dashboard database error:", error);
+    dbError = "Database connection error. Please verify your DATABASE_URL in Vercel settings.";
+  }
 
   const publishedItems = publishedProjects + publishedPlayground;
   const draftItems = projectCount + playgroundCount - publishedItems;
@@ -38,6 +50,11 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-10">
+      {dbError ? (
+        <div className="border border-accent-text/40 bg-accent/10 p-4 text-sm text-accent-text">
+          {dbError}
+        </div>
+      ) : null}
       <div>
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted">Overview</p>
         <p className="mt-2 max-w-xl text-muted">

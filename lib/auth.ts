@@ -36,22 +36,27 @@ export async function authenticate(email: string, password: string) {
 }
 
 export async function getCurrentAdmin() {
-  const cookieStore = await cookies();
-  const session = readSessionToken(cookieStore.get(SESSION_COOKIE)?.value);
-  if (!session) {
+  try {
+    const cookieStore = await cookies();
+    const session = readSessionToken(cookieStore.get(SESSION_COOKIE)?.value);
+    if (!session) {
+      return null;
+    }
+
+    const admin = await prisma.admin.findUnique({
+      where: { id: session.sub },
+      select: { id: true, email: true, passwordHash: true },
+    });
+
+    if (!admin || passwordFingerprint(admin.passwordHash) !== session.pwd) {
+      return null;
+    }
+
+    return { id: admin.id, email: admin.email };
+  } catch (error) {
+    console.error("getCurrentAdmin failed:", error);
     return null;
   }
-
-  const admin = await prisma.admin.findUnique({
-    where: { id: session.sub },
-    select: { id: true, email: true, passwordHash: true },
-  });
-
-  if (!admin || passwordFingerprint(admin.passwordHash) !== session.pwd) {
-    return null;
-  }
-
-  return { id: admin.id, email: admin.email };
 }
 
 export async function setSession(adminId: string, passwordHash: string) {
