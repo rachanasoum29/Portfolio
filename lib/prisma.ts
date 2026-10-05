@@ -8,23 +8,27 @@ const globalForPrisma = globalThis as unknown as {
 function createPrismaClient() {
   const rawUrl = process.env.DATABASE_URL;
 
-  if (!rawUrl) {
-    throw new Error(
-      "DATABASE_URL is not set. Copy .env.example to .env and add your PostgreSQL connection string.",
-    );
-  }
-
-  let connectionString = rawUrl.trim();
-  // Strip accidental wrapping quotes from environment variables
+  let connectionString = rawUrl?.trim();
   if (
-    (connectionString.startsWith('"') && connectionString.endsWith('"')) ||
-    (connectionString.startsWith("'") && connectionString.endsWith("'"))
+    connectionString &&
+    ((connectionString.startsWith('"') && connectionString.endsWith('"')) ||
+      (connectionString.startsWith("'") && connectionString.endsWith("'")))
   ) {
     connectionString = connectionString.slice(1, -1).trim();
   }
 
+  if (!connectionString) {
+    console.warn(
+      "DATABASE_URL is not set. Using fallback mode for static generation. Add your PostgreSQL connection string to your environment variables.",
+    );
+  }
+
+  const effectiveUrl =
+    connectionString ||
+    "postgresql://postgres:postgres@localhost:5432/fallback?sslmode=disable";
+
   return new PrismaClient({
-    adapter: new PrismaPg({ connectionString }),
+    adapter: new PrismaPg({ connectionString: effectiveUrl }),
   });
 }
 
