@@ -20,7 +20,9 @@ export type ProjectFormValues = {
   title: string;
   slug: string;
   description: string;
-  image: string;
+  image?: string;
+  laptopImage?: string;
+  mobileImage?: string;
   technologies: string;
   year: string;
   order: number;
@@ -40,7 +42,12 @@ export function ProjectForm({ mode, projectId, initialValues }: ProjectFormProps
   const action = mode === "create" ? createProject : boundUpdate;
   const [state, formAction, pending] = useActionState(action, initialState);
   const [title, setTitle] = useState(initialValues.title);
-  const [image, setImage] = useState(initialValues.image);
+  const [laptopImage, setLaptopImage] = useState(
+    initialValues.laptopImage || initialValues.image || "",
+  );
+  const [mobileImage, setMobileImage] = useState(
+    initialValues.mobileImage || "",
+  );
   const [slugOverride, setSlugOverride] = useState<string | null>(
     mode === "edit" ? initialValues.slug : null,
   );
@@ -122,7 +129,50 @@ export function ProjectForm({ mode, projectId, initialValues }: ProjectFormProps
         ) : null}
       </div>
 
-      <ImageUpload value={image} onChange={setImage} error={state.fieldErrors?.image} />
+      <input type="hidden" name="image" value={laptopImage} />
+
+      <div className="flex flex-col gap-6 rounded-xl border border-line bg-surface/20 p-5 sm:p-6">
+        <div>
+          <h3 className="text-sm font-medium tracking-tight text-foreground">Device Mockup Images</h3>
+          <p className="mt-1 text-xs text-muted">
+            Upload distinct images for the desktop preview (laptop) and mobile mockup (phone).
+          </p>
+        </div>
+
+        <ImageUpload
+          name="laptopImage"
+          label="Laptop preview image (Desktop)"
+          value={laptopImage}
+          onChange={setLaptopImage}
+          error={state.fieldErrors?.laptopImage || state.fieldErrors?.image}
+          folder="projects"
+        />
+
+        <div className="border-t border-line pt-6">
+          <ImageUpload
+            name="mobileImage"
+            label="Mobile mockup image (Phone)"
+            value={mobileImage}
+            onChange={setMobileImage}
+            error={state.fieldErrors?.mobileImage}
+            folder="projects"
+          />
+          {!mobileImage ? (
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
+              <span>Tip: Upload a portrait screenshot captured in mobile view.</span>
+              <button
+                type="button"
+                onClick={() =>
+                  setMobileImage("/uploads/projects/1791353440846-8b048b2e4413.jpg")
+                }
+                className="font-mono text-accent-text underline hover:text-foreground"
+              >
+                Click to attach uploaded mobile screenshot
+              </button>
+            </div>
+          ) : null}
+        </div>
+      </div>
 
       <div className="flex flex-col gap-3">
         <label htmlFor="technologies" className={labelClass}>

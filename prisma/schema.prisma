@@ -25,6 +25,8 @@ model Project {
   slug         String   @unique
   description  String   @db.Text
   image        String?
+  laptopImage  String?
+  mobileImage  String?
   technologies String[] @default([])
   year         String   @default("")
   githubUrl    String?

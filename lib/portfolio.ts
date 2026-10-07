@@ -20,6 +20,8 @@ export type PortfolioProject = {
   description: string;
   technologies: string[];
   image: string;
+  laptopImage: string;
+  mobileImage: string;
   year: string;
 };
 
@@ -80,41 +82,67 @@ export async function getPublishedProjects(): Promise<PortfolioProject[]> {
       orderBy: [{ order: "asc" }, { updatedAt: "desc" }],
     });
 
+    const defaultMobile = "/uploads/projects/1791353440846-8b048b2e4413.jpg";
+
     if (rows.length === 0) {
-      return fallbackProjectsList.map((p) => ({
+      return fallbackProjectsList.map((p) => {
+        const laptopImage = p.laptopImage || p.image;
+        const mobileImage =
+          p.mobileImage && p.mobileImage !== laptopImage ? p.mobileImage : defaultMobile;
+        return {
+          id: p.slug,
+          number: p.number,
+          slug: p.slug,
+          title: p.title,
+          description: p.description,
+          technologies: p.technologies,
+          image: laptopImage,
+          laptopImage,
+          mobileImage,
+          year: p.year,
+        };
+      });
+    }
+
+    return rows.map((row, index) => {
+      const laptopImage = (row as any).laptopImage || row.image || "/uploads/projects/1791353478751-9572b9776c1c.jpg";
+      const rawMobile = (row as any).mobileImage;
+      const mobileImage =
+        rawMobile && rawMobile !== laptopImage ? rawMobile : defaultMobile;
+      return {
+        id: row.id,
+        number: indexLabel(index),
+        slug: row.slug,
+        title: row.title,
+        description: row.description,
+        technologies: row.technologies,
+        image: laptopImage,
+        laptopImage,
+        mobileImage,
+        year: row.year,
+      };
+    });
+  } catch (error) {
+    console.warn("Could not query database for published projects, using fallback:", error);
+    return fallbackProjectsList.map((p) => {
+      const laptopImage = p.laptopImage || p.image || "/uploads/projects/1791353478751-9572b9776c1c.jpg";
+      const mobileImage =
+        p.mobileImage && p.mobileImage !== laptopImage
+          ? p.mobileImage
+          : "/uploads/projects/1791353440846-8b048b2e4413.jpg";
+      return {
         id: p.slug,
         number: p.number,
         slug: p.slug,
         title: p.title,
         description: p.description,
         technologies: p.technologies,
-        image: p.image,
+        image: laptopImage,
+        laptopImage,
+        mobileImage,
         year: p.year,
-      }));
-    }
-
-    return rows.map((row, index) => ({
-      id: row.id,
-      number: indexLabel(index),
-      slug: row.slug,
-      title: row.title,
-      description: row.description,
-      technologies: row.technologies,
-      image: row.image || "/images/project-01.svg",
-      year: row.year,
-    }));
-  } catch (error) {
-    console.warn("Could not query database for published projects, using fallback:", error);
-    return fallbackProjectsList.map((p) => ({
-      id: p.slug,
-      number: p.number,
-      slug: p.slug,
-      title: p.title,
-      description: p.description,
-      technologies: p.technologies,
-      image: p.image,
-      year: p.year,
-    }));
+      };
+    });
   }
 }
 

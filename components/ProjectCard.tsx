@@ -18,6 +18,8 @@ export function ProjectCard({
   const tech = project.technologies.join(" · ");
   const stage = (
     <DeviceStage
+      laptopImage={project.laptopImage || project.image}
+      mobileImage={project.mobileImage}
       src={project.image}
       title={project.title}
       year={project.year || undefined}

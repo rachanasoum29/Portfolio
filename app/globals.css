@@ -147,6 +147,25 @@ body {
   }
 }
 
+@keyframes loaderBar {
+  0% {
+    width: 0%;
+  }
+  40% {
+    width: 55%;
+  }
+  75% {
+    width: 85%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-loader-bar {
+  animation: loaderBar 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;

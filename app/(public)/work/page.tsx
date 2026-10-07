@@ -35,6 +35,8 @@ export default async function WorkPage() {
               style={popOnScroll(index + 1)}
             >
               <DeviceStage
+                laptopImage={project.laptopImage || project.image}
+                mobileImage={project.mobileImage}
                 src={project.image}
                 title={project.title}
                 year={project.year || undefined}

@@ -63,22 +63,43 @@ export default async function AdminWorkPage({ searchParams }: WorkPageProps) {
           {projects.map((project) => (
             <li
               key={project.id}
-              className="grid gap-4 px-4 py-5 sm:grid-cols-[5rem_1fr_auto] sm:items-center sm:gap-6 sm:px-5"
+              className="grid gap-4 px-4 py-5 sm:grid-cols-[7rem_1fr_auto] sm:items-center sm:gap-6 sm:px-5"
             >
-              <div className="relative aspect-square overflow-hidden border border-line bg-surface">
-                {project.image ? (
-                  // Admin preview only. Paths and remote URLs are both allowed.
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={project.image}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <span className="flex h-full items-center justify-center text-[11px] uppercase tracking-[0.16em] text-muted">
-                    No image
-                  </span>
-                )}
+              <div className="flex items-center gap-2">
+                <div
+                  className="relative aspect-[16/10] w-16 overflow-hidden border border-line bg-surface"
+                  title="Laptop preview"
+                >
+                  {(project as any).laptopImage || project.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={(project as any).laptopImage || project.image}
+                      alt="Laptop preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="flex h-full items-center justify-center text-[9px] uppercase tracking-wider text-muted">
+                      No laptop
+                    </span>
+                  )}
+                </div>
+                <div
+                  className="relative aspect-[9/19.5] w-7 overflow-hidden rounded-[3px] border border-line bg-surface"
+                  title="Mobile mockup"
+                >
+                  {(project as any).mobileImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={(project as any).mobileImage}
+                      alt="Mobile mockup"
+                      className="h-full w-full object-cover object-top"
+                    />
+                  ) : (
+                    <span className="flex h-full items-center justify-center text-[7px] uppercase tracking-wider text-muted">
+                      Fallback
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="min-w-0">
                 <p className="truncate text-lg font-medium tracking-[-0.02em]">{project.title}</p>

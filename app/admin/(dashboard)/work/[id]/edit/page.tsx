@@ -41,6 +41,10 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
           slug: project.slug,
           description: project.description,
           image: project.image ?? "",
+          laptopImage: (project as any).laptopImage ?? project.image ?? "",
+          mobileImage:
+            (project as any).mobileImage ||
+            "/uploads/projects/1791353440846-8b048b2e4413.jpg",
           technologies: project.technologies.join(", "),
           year: project.year,
           order: project.order,

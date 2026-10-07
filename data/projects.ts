@@ -5,6 +5,8 @@ export type Project = {
   description: string;
   technologies: string[];
   image: string;
+  laptopImage?: string;
+  mobileImage?: string;
   year: string;
   featured: boolean;
 };
@@ -17,7 +19,9 @@ export const projects: Project[] = [
     description:
       "A corporate website and a content system for updating pages, sections, and site copy from one place.",
     technologies: ["Next.js", "TypeScript", "Payload CMS", "PostgreSQL"],
-    image: "/images/project-01.svg",
+    image: "/uploads/projects/1791353478751-9572b9776c1c.jpg",
+    laptopImage: "/uploads/projects/1791353478751-9572b9776c1c.jpg",
+    mobileImage: "/uploads/projects/1791353440846-8b048b2e4413.jpg",
     year: "2025 — 2026",
     featured: true,
   },

@@ -6,6 +6,8 @@ const viewCaseClass =
 
 export function DeviceStage({
   src,
+  laptopImage,
+  mobileImage,
   title,
   year,
   href,
@@ -13,7 +15,9 @@ export function DeviceStage({
   summary,
   tech,
 }: {
-  src: string;
+  src?: string;
+  laptopImage?: string;
+  mobileImage?: string;
   title: string;
   year?: string;
   href: string;
@@ -21,6 +25,11 @@ export function DeviceStage({
   summary?: string;
   tech?: string;
 }) {
+  const laptopSrc = laptopImage || src || "/uploads/projects/1791353478751-9572b9776c1c.jpg";
+  const defaultMobile = "/uploads/projects/1791353440846-8b048b2e4413.jpg";
+  const mobileSrc =
+    mobileImage && mobileImage !== laptopSrc ? mobileImage : defaultMobile;
+
   return (
     <div className="relative isolate overflow-hidden rounded-[1.75rem] bg-[#141211]">
       <PaperPlane />
@@ -33,8 +42,8 @@ export function DeviceStage({
         </Link>
       </div>
       <div className="relative mx-auto flex w-full max-w-5xl items-end justify-center px-3 pt-28 pb-28 sm:px-8 sm:pt-24 sm:pb-36">
-        <Phone src={src} title={title} />
-        <Laptop src={src} title={title} />
+        <Phone src={mobileSrc} title={title} />
+        <Laptop src={laptopSrc} title={title} />
       </div>
       {number ? (
         <div className="absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-[#141211] via-[#141211]/92 to-transparent px-5 pt-20 pb-5 sm:px-8 sm:pt-28 sm:pb-7">
@@ -67,14 +76,14 @@ function Phone({ src, title }: { src: string; title: string }) {
   return (
     <div className="relative z-20 w-[32%] max-w-[200px] translate-y-3 -rotate-[8deg]">
       <div className="rounded-[1.5rem] bg-[#1c1c1c] p-1.5 shadow-[0_22px_50px_rgba(0,0,0,0.45)] ring-1 ring-white/10 sm:rounded-[1.8rem] sm:p-2">
-        <div className="relative aspect-[9/19] overflow-hidden rounded-[1.2rem] bg-black sm:rounded-[1.45rem]">
+        <div className="relative aspect-[9/19.5] overflow-hidden rounded-[1.2rem] bg-black sm:rounded-[1.45rem]">
           <Image
             src={src}
             alt=""
             fill
             unoptimized
             sizes="200px"
-            className="media-zoom object-cover object-left-top"
+            className="media-zoom w-full h-full object-cover object-top aspect-[9/19.5]"
           />
           <span className="sr-only">{title} on a phone</span>
           <span aria-hidden="true" className="absolute top-1.5 left-1/2 h-3 w-10 -translate-x-1/2 rounded-full bg-black sm:h-4 sm:w-12" />

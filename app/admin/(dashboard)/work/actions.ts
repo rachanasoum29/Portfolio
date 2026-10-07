@@ -16,7 +16,18 @@ import {
 export type ProjectFormState = {
   formError?: string;
   fieldErrors?: Partial<
-    Record<"title" | "slug" | "description" | "image" | "technologies" | "year" | "order", string>
+    Record<
+      | "title"
+      | "slug"
+      | "description"
+      | "image"
+      | "laptopImage"
+      | "mobileImage"
+      | "technologies"
+      | "year"
+      | "order",
+      string
+    >
   >;
 };
 
@@ -25,6 +36,8 @@ type ProjectInput = {
   slug: string;
   description: string;
   image: string | null;
+  laptopImage: string | null;
+  mobileImage: string | null;
   technologies: string[];
   year: string;
   order: number;
@@ -47,7 +60,12 @@ function readProjectInput(formData: FormData): {
   const slugRaw = String(formData.get("slug") ?? "").trim();
   const slug = slugRaw ? slugify(slugRaw) : slugify(title);
   const description = String(formData.get("description") ?? "").trim();
-  const image = String(formData.get("image") ?? "").trim();
+  const rawLaptopImage = String(formData.get("laptopImage") ?? "").trim();
+  const rawMobileImage = String(formData.get("mobileImage") ?? "").trim();
+  const rawLegacyImage = String(formData.get("image") ?? "").trim();
+  const laptopImage = rawLaptopImage || rawLegacyImage;
+  const mobileImage = rawMobileImage;
+  const image = rawLegacyImage || rawLaptopImage;
   const technologiesRaw = String(formData.get("technologies") ?? "");
   const year = String(formData.get("year") ?? "").trim();
   const orderRaw = String(formData.get("order") ?? "");
@@ -73,8 +91,12 @@ function readProjectInput(formData: FormData): {
     fieldErrors.description = "Description must be 5000 characters or fewer.";
   }
 
-  if (image && !isManagedUploadPath(image) && !isValidOptionalImagePath(image)) {
-    fieldErrors.image = "Upload an image or clear the current one.";
+  if (laptopImage && !isManagedUploadPath(laptopImage) && !isValidOptionalImagePath(laptopImage)) {
+    fieldErrors.laptopImage = "Upload a laptop preview image or clear the current one.";
+  }
+
+  if (mobileImage && !isManagedUploadPath(mobileImage) && !isValidOptionalImagePath(mobileImage)) {
+    fieldErrors.mobileImage = "Upload a mobile preview image or clear the current one.";
   }
 
   if (technologiesRaw.length > 500) {
@@ -100,6 +122,8 @@ function readProjectInput(formData: FormData): {
       slug,
       description,
       image: image || null,
+      laptopImage: laptopImage || null,
+      mobileImage: mobileImage || null,
       technologies: parseTechnologies(technologiesRaw),
       year,
       order,
@@ -134,14 +158,16 @@ export async function createProject(
         ...values,
         githubUrl: null,
         liveUrl: null,
-      },
+      } as any,
     });
   } catch (error) {
     if (isUniqueSlugError(error)) {
       return { fieldErrors: { slug: "That slug is already in use." } };
     }
     console.error("Create project failed", error);
-    return { formError: "Could not save the project. Try again." };
+    const message =
+      error instanceof Error ? error.message : "Could not save the project. Try again.";
+    return { formError: message };
   }
 
   revalidatePath("/admin");
@@ -178,14 +204,16 @@ export async function updateProject(
   try {
     await prisma.project.update({
       where: { id },
-      data: values,
+      data: values as any,
     });
   } catch (error) {
     if (isUniqueSlugError(error)) {
       return { fieldErrors: { slug: "That slug is already in use." } };
     }
     console.error("Update project failed", error);
-    return { formError: "Could not save the project. Try again." };
+    const message =
+      error instanceof Error ? error.message : "Could not save the project. Try again.";
+    return { formError: message };
   }
 
   revalidatePath("/admin");

@@ -1,5 +1,6 @@
 import { Container } from "@/components/Container";
 import { Hero } from "@/components/Hero";
+import PageLoader from "@/components/PageLoader";
 import { ProjectCard } from "@/components/ProjectCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { getSelectedProjects, getSiteSettings } from "@/lib/portfolio";
@@ -12,6 +13,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <PageLoader minDuration={1500} />
       <Hero name={settings.name} role={settings.role} intro={settings.intro} />
       <section id="selected-work" aria-labelledby="selected-work-heading" className="border-t border-line">
         <Container className="pt-8 pb-20 md:pt-10 md:pb-28 lg:pb-36">

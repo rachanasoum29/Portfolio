@@ -19,6 +19,8 @@ export default function NewProjectPage() {
           slug: "",
           description: "",
           image: "",
+          laptopImage: "",
+          mobileImage: "",
           technologies: "",
           year: "",
           order: 0,

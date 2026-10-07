@@ -38,19 +38,30 @@ export function ImageUpload({
       return;
     }
 
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError("Image must be 5MB or smaller.");
+      return;
+    }
+
     const formData = new FormData();
     formData.set("file", file);
     formData.set("folder", folder);
 
     startTransition(async () => {
       setUploadError(null);
-      const result = await uploadImage(formData);
-      if (result.error) {
-        setUploadError(result.error);
-        return;
-      }
-      if (result.url) {
-        onChange(result.url);
+      try {
+        const result = await uploadImage(formData);
+        if (result.error) {
+          setUploadError(result.error);
+          return;
+        }
+        if (result.url) {
+          onChange(result.url);
+        }
+      } catch (err) {
+        setUploadError(
+          err instanceof Error ? err.message : "Upload failed. Please try a smaller image.",
+        );
       }
     });
   }
@@ -97,12 +108,12 @@ export function ImageUpload({
           type="button"
           onClick={() => {
             setShowUrlInput(!showUrlInput);
-            setUrlInputValue(value.startsWith("http") ? value : "");
+            setUrlInputValue(value || "");
           }}
           disabled={pending}
           className="text-[12px] font-medium uppercase tracking-[0.16em] text-muted transition-colors hover:text-accent-text disabled:opacity-50"
         >
-          {showUrlInput ? "Hide URL input" : "Or paste image URL"}
+          {showUrlInput ? "Hide path/URL input" : "Or paste image path / URL"}
         </button>
         {value ? (
           <button
@@ -123,8 +134,8 @@ export function ImageUpload({
       {showUrlInput ? (
         <div className="flex items-center gap-2 pt-1">
           <input
-            type="url"
-            placeholder="https://example.com/image.jpg"
+            type="text"
+            placeholder="/uploads/projects/... or https://example.com/image.jpg"
             value={urlInputValue}
             onChange={(e) => setUrlInputValue(e.target.value)}
             className="w-full min-h-10 border-0 border-b border-line bg-transparent px-0 py-2 text-sm text-foreground transition-colors placeholder:text-muted focus:border-accent"
