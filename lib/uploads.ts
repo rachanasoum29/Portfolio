@@ -49,7 +49,8 @@ export async function saveUploadedImage(file: File, folder = "projects") {
 
   const hasRealBlobToken =
     Boolean(process.env.BLOB_READ_WRITE_TOKEN) &&
-    process.env.BLOB_READ_WRITE_TOKEN !== "blob_rw_token_1234567890";
+    process.env.BLOB_READ_WRITE_TOKEN !== "blob_rw_token_1234567890" &&
+    !process.env.BLOB_READ_WRITE_TOKEN.includes("...");
 
   // If a real Vercel Blob token is configured, upload to Vercel Blob Storage
   if (hasRealBlobToken) {
