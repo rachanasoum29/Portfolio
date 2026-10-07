@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 
 export interface PageLoaderProps {
+  /** Explicit control over loading state. When provided, controls visibility and initiates fade-out when false. */
+  isLoading?: boolean;
   /** Minimum duration to show loader in milliseconds. Defaults to 1500ms */
   minDuration?: number;
   /** Image URL for brand logo. Defaults to "/images/logo.png" */
@@ -18,6 +20,7 @@ export interface PageLoaderProps {
 }
 
 export default function PageLoader({
+  isLoading,
   minDuration = 1500,
   logoSrc = "/images/logo.png",
   logoAlt = "Logo",
@@ -25,17 +28,27 @@ export default function PageLoader({
   text = "Loading...",
   className = "",
 }: PageLoaderProps) {
-  const [visible, setVisible] = useState(true);
-  const [mounted, setMounted] = useState(true);
+  const [visible, setVisible] = useState(isLoading ?? true);
+  const [mounted, setMounted] = useState(isLoading ?? true);
 
   useEffect(() => {
+    if (isLoading !== undefined) {
+      if (isLoading) {
+        setMounted(true);
+        setVisible(true);
+      } else {
+        setVisible(false);
+      }
+      return;
+    }
+
     // Keep visible for minDuration (~1.5s) so the progress bar animates smoothly from 0% to 100%
     const timer = setTimeout(() => {
       setVisible(false);
     }, minDuration);
 
     return () => clearTimeout(timer);
-  }, [minDuration]);
+  }, [isLoading, minDuration]);
 
   useEffect(() => {
     if (!visible) {

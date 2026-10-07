@@ -36,5 +36,7 @@ export function GlobalPageLoader({ minDuration = 2000 }: GlobalPageLoaderProps) 
     };
   }, [minDuration]);
 
-  return <PageLoader isLoading={isLoading} />;
+  return <PageLoader isLoading={isLoading} minDuration={minDuration} />;
 }
+
+export default GlobalPageLoader;
